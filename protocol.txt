@@ -1,0 +1,31 @@
+To store a key, value pair:
+
+PUT or POST the following to baseurl/data/key:
+{'value': value, 'signature': signature}
+
+where
+  value is the value you want to associate with the key
+  signature is hash(sharedSecret, hash(value))
+
+To get a value for a get:
+
+GET baseurl/data/key returns:
+{'value': value, 'signature': signature}
+
+where
+  value is the value associated with the key
+  signature is hash(sharedSecret, hash(value))
+
+To add self to the network:
+
+GET baseurl/challenge returns a JSON string
+PUT or POST to baseurl/addPeer the following JSON value:
+
+{'challenge': challenge, 'response': response, 'callback': callback}
+
+where
+  challenge is the value returned from baseurl/challenge
+  response is hash(sharedSecret, challenge)
+  callback is your own baseurl
+
+Your closest peers will respond be calling challenge and addPeer on your own callback URL
