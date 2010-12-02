@@ -11,14 +11,9 @@ application = webapp.WSGIApplication([
   ('/welcome', WelcomePage),
   ('/login', LoginPage),
 
-  ('/dashboard/(.*)/(.*)', DashboardDocumentPage),
-  ('/dashboard/(.*)', DashboardDatabasePage),
-  ('/dashboard', DashboardIndexPage),
-
-  ('/db', DatabasesPage),
-  ('/db/new', NewDatabasePage),
-  ('/db/(.*)/(.*)', DocumentPage),
-  ('/db/(.*)', DatabasePage),
+  ('/data/(.)', DataPage),
+  ('/challenge', ChallengePage),
+  ('/addPeer', AddPeerPage),
 ], debug=True)
 
 def main():

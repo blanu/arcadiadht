@@ -5,9 +5,6 @@ from google.appengine.ext.webapp import template
 from pages import *
 
 application = webapp.WSGIApplication([
-#  ('/admin', AdminIndexPage),
-#  ('/admin/curated', AdminCuratedPage),
-#  ('/admin/curated/new', AdminNewCuratedPage),
 ], debug=True)
 
 def main():
