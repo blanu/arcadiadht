@@ -1,3 +1,13 @@
+Function definitions:
+  dh() is an ECDH key exchange
+  hash() is a Skein-512-512 hash
+
+To generate a sharedSecret:
+  dh(privkey, pubkey)
+  where
+    privkey is your private key
+    pubkey is the destination peer's public key
+
 To store a key, value pair:
 
 PUT or POST the following to baseurl/data/key:

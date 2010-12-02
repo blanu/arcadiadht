@@ -1,0 +1,196 @@
+.hidden
+{
+  display: none;
+}
+
+#drop
+{
+  position: relative;
+  background: #B5EDBC;
+  border: 1px solid green;
+}
+
+#drop input
+{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+#addLinks
+{
+  position: relative;
+  background: #B5EDBC;
+  border: 1px solid green;
+}
+
+#playerContainer
+{
+  text-align: center;
+  clear: left;
+  width: 50%;
+}
+
+.renameTabButton, .deleteTabButton
+{
+  float: right;
+  cursor: pointer;
+}
+
+.deleteButton
+{
+  height: 24px;
+  width: 24px;
+  margin-left: 1em;
+}
+
+#uploading
+{
+  float: right;
+  width: 100%;
+}
+
+#uploading li
+{
+  border: 1px solid blue;
+}
+
+.progress
+{
+  color: blue;
+  margin-left: 10px;
+}
+
+#options
+{
+  float: left;
+  width: 300px;
+  text-align: center;
+}
+
+#welcome
+{
+  height: 80%
+}
+
+#curated li
+{
+  list-style: none;
+}
+
+#curated li a img
+{
+  width: 64px;
+  height: 64px;
+}
+
+.deleteTabButton
+{
+  float: right;
+}
+
+.participants, .invites
+{
+  list-style: none;
+}
+
+.participants li, .invites li
+{
+  display: inline;
+  height: 32px;
+  width: 32px;
+}
+
+.participants img
+{
+  height: 32px;
+  width: 32px;
+  border: 1px solid black;
+}
+
+.invite
+{
+  border: 1px solid lightgray !important;
+}
+
+.addParticipant
+{
+  height: 32px;
+  width: 32px;
+  border-radius: 5px;
+}
+
+.template
+{
+  visibility: none;
+  display: none;
+}
+
+.contacts
+{
+  list-style: none;
+}
+
+.contacts img
+{
+  height: 32px;
+  width: 32px;
+  border: 1px solid black;
+}
+
+#typeControls
+{
+  border: 1px solid black;
+  margin-bottom: 10px;
+}
+
+#editorMain
+{
+  border: 1px solid black;
+  margin: auto;
+}
+
+.selected
+{
+  border: 1px solid gray;
+}
+
+.null
+{
+  color: red;
+}
+
+.string
+{
+  color: green;
+}
+
+.number
+{
+  color: blue;
+}
+
+.boolean
+{
+  color: black;
+}
+
+.array
+{
+  background-color: cyan;
+}
+
+.map
+{
+  background-color: pink;
+}
+
+.array tbody tr td
+{
+  border: 1px solid black;
+  background-color: white;
+  margin: 5px;
+}
