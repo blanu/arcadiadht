@@ -1,12 +1,6 @@
 Function definitions:
-  dh() is an ECDH key exchange
+  sign() is an RSA signature
   hash() is a Skein-512-512 hash
-
-To generate a sharedSecret:
-  dh(privkey, pubkey)
-  where
-    privkey is your private key
-    pubkey is the destination peer's public key
 
 To store a key, value pair:
 
@@ -15,7 +9,8 @@ PUT or POST the following to baseurl/data/key:
 
 where
   value is the value you want to associate with the key
-  signature is hash(sharedSecret, hash(value))
+  signature is sign(privkey, value)
+  privkey is the client's RSA private key
 
 To get a value for a get:
 
@@ -24,7 +19,8 @@ GET baseurl/data/key returns:
 
 where
   value is the value associated with the key
-  signature is hash(sharedSecret, hash(value))
+  signature is sign(privkey, value)
+  privkey is the server's private RSA key
 
 To add self to the network:
 
@@ -35,7 +31,8 @@ PUT or POST to baseurl/addPeer the following JSON value:
 
 where
   challenge is the value returned from baseurl/challenge
-  response is hash(sharedSecret, challenge)
-  callback is your own baseurl
+  response is sign(privkey, challenge)
+  privkey is client's private RSA key
+  callback is client's own baseurl
 
-Your closest peers will respond be calling challenge and addPeer on your own callback URL
+Client's closest peers will respond be calling challenge and addPeer on client callback URL
