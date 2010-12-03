@@ -47,3 +47,10 @@ class LoginPage(TemplatePage):
 
   def requireLogin(self):
     return True
+
+class DashboardIndexPage(TemplatePage):
+  def processContext(self, method, user, req, resp, args, context):
+    pass
+
+  def requireLogin(self):
+    return True

@@ -18,9 +18,24 @@ from google.appengine.api import mail
 from django.utils.simplejson import loads, dumps
 
 from airspeed import CachingFileLoader
+import ezPyCrypto
 
 from generic import TemplatePage, JsonPage, GenericPage, FilePage
 from models import *
+
+def sign(doc):
+  fd = open("id_rsa")
+  pubprivkey = fd.read()
+  fd.close()
+
+  k = ezPyCrypto.key(pubprivkey)
+  sig = k.signString(doc)
+
+  return sig
+
+def verify(doc, sig, pubkey):
+  k = ezPyCrypto.key(pubkey)
+  return k.verifyString(doc, sig)
 
 def notify(apikey, channel, msg):
   logging.debug('notify:')

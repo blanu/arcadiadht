@@ -23,97 +23,95 @@ from generic import JsonPage
 from models import *
 from util import *
 
-class DataPage(JsonPage):
-  def processJson(self, method, user, req, resp, args, obj):
-    logging.info('new database')
-    logging.info(obj)
-    if obj:
-      try:
-        dbid=obj['dbid']
-      except:
-        dbid=None
-    else:
-      dbid=None
-
-    logging.info('dbid: '+str(dbid))
-
-    try:
-      db=newDatabase(user, dbid=dbid)
-    except Exception, e:
-      logging.error(str(e))
-    if not db:
-      logging.error('Database with that id already exists '+str(dbid))
-      return None
-    else:
-      logging.error('db: '+str(db))
-      logging.info('dbid: '+str(db.dbid))
-
-      dbs=Database.all().filter("owner =", user).fetch(10)
-      results=[]
-      for rdb in dbs:
-        results.append(rdb.dbid)
-
-      logging.info('results: '+str(results))
-
-      notify('freefall', 'dbs-'+user.email().lower(), dumps(results))
-
-      return db.dbid
-
-  def requireLogin(self):
-    return True
-
+# Peer API
 class ChallengePage(JsonPage):
   def processJson(self, method, user, req, resp, args, obj):
-    dbs=Database.all().filter("owner =", user).fetch(10)
-    results=[]
-    for db in dbs:
-      results.append(db.dbid)
+    pubkey=args[0]
 
-#    notify('freefall', 'dbs-'+user.email().lower()+'-newtab', dumps({'name': name, 'id': wave.waveid}))
+    chal=Challenge.all().filter("pubkey =", pubkey).get()
+    if chal:
+      print('Already issued a challenge for '+str(pubkey)+': '+str(chal.challenge))
+    else:
+      chal=Challenge(pubkey=pubkey, challenge=generateId())
+      chal.save()
+      print('New challenge for '+str(pubkey)+': '+str(chal.challenge))
 
-    return results
+    return chal.challenge
 
   def requireLogin(self):
-    return True
+    return False
 
 class AddPeerPage(JsonPage):
   def processJson(self, method, user, req, resp, args, obj):
-    dbid=args[0]
+    pubkey=args[0]
 
-    if method=='GET':
-      db=Database.all().filter("owner =", user).filter("dbid =", dbid).get()
-      if not db:
-        logging.error('Database with that id does not exist '+str(dbid))
-        return
+    print('Add peer '+str(pubkey)+': '+str(obj))
 
-#    notify('freefall', 'dbs-'+user.email().lower()+'-newtab', dumps({'name': name, 'id': wave.waveid}))
+    chal=Challenge.all().filter('pubkey =', pubkey).get()
+    if chal.challenge!=obj['challenge']:
+      print('Challenges do not match '+str(obj['challenge'])+', '+str(chal.challenge))
+      return
+    if not verify(chal.challenge, obj['response'], pubkey):
+      print('Signature does not verify '+str(obj['response']))
+      return
 
-      results=[]
-      docs=Document.all().filter("database =", db).fetch(10)
-      for doc in docs:
-        results.append(doc.docid)
-
-      return results
-    elif method=='POST':
-      doc=newDocument(db, obj)
-      if not doc:
-        logging.error('Document id collision '+str(docid)+', overwriting...')
-        doc.state=obj
-        doc.save()
-        return None
-      else:
-        docs=Document.all().filter('database =', db).fetch(10)
-        results=[]
-        for rdoc in docs:
-          results.append(rdoc.docid)
-
-        logging.info('results: '+str(results))
-
-        notify('freefall', 'docs-'+user.email().lower()+'-'+db.dbid, dumps(results))
-
-        return doc.docid
-    else:
-      logging.error('Unknown method '+str(method))
+    # Add peer locally or pass on to nearest neighbor
 
   def requireLogin(self):
-    return True
+    return False
+
+class DataPage(JsonPage):
+  def processJson(self, method, user, req, resp, args, obj):
+    key=args[0]
+
+    if method=='GET':
+      data=Data.all().filter("datakey =", key).get()
+      if not data:
+        logging.error('Data with that key does not exist '+str(key))
+        return
+      else:
+        return data.value
+    elif method=='POST':
+      data=Data.all().filter("datakey =", key).get()
+      if not data:
+        logging.error('Writing data to new key: '+str(key))
+        return
+      else:
+        data=Data(datakey=key, value=obj)
+        data.save()
+    else:
+      logging.debug('Unknown method: '+str(method))
+
+  def requireLogin(self):
+    return False
+
+# Client API
+class ClientDataPage(JsonPage):
+  def processJson(self, method, user, req, resp, args, obj):
+    key=args[0]
+
+    if method=='GET':
+      data=Data.all().filter("datakey =", key).get()
+      if not data:
+        logging.error('Data with that key does not exist '+str(key))
+        return
+      else:
+        logging.error('Found value '+str(data.value))
+        return loads(data.value)
+    elif method=='POST':
+      value=req.get('value')
+      data=Data.all().filter("datakey =", key).get()
+      if not data:
+        logging.error('Writing data to new key: '+str(key)+' '+dumps(obj))
+        data=Data(datakey=key, value=value)
+        data.save()
+        logging.error('Wrote data: '+str(data.datakey)+' '+str(data.value))
+      else:
+        data.value=value
+        data.save()
+        logging.error('Wrote data: '+str(data.datakey)+' '+str(data.value))
+    else:
+      logging.debug('Unknown method: '+str(method))
+
+  def requireLogin(self):
+    return False
