@@ -1,18 +1,17 @@
+Peer API
+-----------------
 Function definitions:
   sign() is an RSA signature
   hash() is a Skein-512-512 hash
 
 To store a key, value pair:
 
-PUT or POST the following to baseurl/data/key:
-{'value': value, 'signature': signature}
-
-where
+PUT or POST the following form fields to baseurl/data/key:
   value is the value you want to associate with the key
   signature is sign(privkey, value)
   privkey is the client's RSA private key
 
-To get a value for a get:
+To get a value for a key:
 
 GET baseurl/data/key returns:
 {'value': value, 'signature': signature}
@@ -25,14 +24,20 @@ where
 To add self to the network:
 
 GET baseurl/challenge returns a JSON string
-PUT or POST to baseurl/addPeer the following JSON value:
-
-{'challenge': challenge, 'response': response, 'callback': callback}
-
-where
+PUT or POST to baseurl/addPeer the following form fields:
   challenge is the value returned from baseurl/challenge
   response is sign(privkey, challenge)
   privkey is client's private RSA key
   callback is client's own baseurl
 
 Client's closest peers will respond be calling challenge and addPeer on client callback URL
+
+Client API
+---------------
+
+To store a key, value pair:
+PUT or POST the following form field to baseurl/data/key:
+  value is the value you want to associate with the key
+
+To get a value for a key:
+GET baseurl/data/key returns JSON value
